@@ -20,19 +20,26 @@ def add_salt_pepper_noise(image, salt_prob, pepper_prob):
     total_pixels = image.size
 
     # Add salt noise
-    num_salt = np.ceil(salt_prob * total_pixels)
-    salt_coords = [np.random.randint(0, i - 1, int(num_salt)) for i in image.shape]
-    noisy_image[salt_coords] = 1
+    num_salt = np.ceil(salt_prob * total_pixels).astype(int)
+    salt_coords = [np.random.randint(0, i, int(num_salt)) for i in image.shape]
+    noisy_image[salt_coords[0], salt_coords[1], salt_coords[2]] = 1
 
     # Add pepper noise
-    num_pepper = np.ceil(pepper_prob * total_pixels)
-    pepper_coords = [np.random.randint(0, i - 1, int(num_pepper)) for i in image.shape]
-    noisy_image[pepper_coords] = 0
+    num_pepper = np.ceil(pepper_prob * total_pixels).astype(int)
+    pepper_coords = [np.random.randint(0, i, int(num_pepper)) for i in image.shape]
+    noisy_image[pepper_coords[0], pepper_coords[1], pepper_coords[2]] = 0
+    area = [1, 2, -1, -2]
+    for i in area:
+        try:
+            noisy_image[pepper_coords[0]+i, pepper_coords[1]+i, pepper_coords[2]+i] = 0
+            noisy_image[salt_coords[0]+i, salt_coords[1]+i, salt_coords[2]+i] = 1
+        except:
+            pass
 
     return noisy_image
 
 
-def add_gaussian_noise(image, mean=0, std=1):
+def add_gaussian_noise(image, mean=0, std=10):
     """
     Add Gaussian noise to image
     :param image: np.array of shape(height, width, channels)
@@ -40,9 +47,10 @@ def add_gaussian_noise(image, mean=0, std=1):
     :param std: float, standard deviation of the Gaussian distribution to generate noise
     :return: np.array of shape(height, width, channels)
     """
-    gaussian_noise = np.random.normal(mean, std, image.shape)
-    noisy_image = image + gaussian_noise
-    return noisy_image
+    gauss_noisy_image = image.copy()
+    gaussian_noise = np.random.normal(mean, std, gauss_noisy_image.shape)
+    gauss_noisy_image = gauss_noisy_image + gaussian_noise
+    return gauss_noisy_image
 
 
 def rotate_image(image, angle):
@@ -82,8 +90,14 @@ def apply_cutout(image, size):
     :param size: int or tuple of int, size of the cutout
     :return: np.array of shape(height, width, channels)
     """
-    cutout = iaa.Cutout(nb_iterations=(1, 3), size=size, squared=False)
-    cutout_image = cutout.augment_image(image)
+    colors = [0, 50, 100, 150, 200, 255]  # Different grayscale intensities
+    num_of_squares = 48
+    num_of_iterations = num_of_squares // len(colors)
+    cutout_image = image.copy()
+    for i in range(len(colors)):
+        color = colors[i]
+        cutout = iaa.Cutout(nb_iterations=num_of_iterations, size=size, squared=True, fill_mode="constant", cval=color)
+        cutout_image = cutout.augment_image(cutout_image)
     return cutout_image
 
 
@@ -110,9 +124,9 @@ def apply_elastic_transform(image, alpha, sigma):
 
 
 # specify your path
-path = 'C:\\Users\\netan\\PycharmProjects\\dataManipulation\\data_before'
+path = '/home/netanel/private/Final_Project_Image_Ragistration/data_before2'
 
-new_path = 'C:\\Users\\netan\\PycharmProjects\\dataManipulation\\data_after'
+new_path = '/home/netanel/private/Final_Project_Image_Ragistration/data_after2'
 
 # get a list of all the image file names in the directory
 image_files = os.listdir(path)
@@ -132,47 +146,47 @@ for image_file in image_files:
 
     # apply the image manipulations
     # apply a Gaussian blur with a 7x7 kernel
-    blurred_image = cv2.GaussianBlur(image, (13, 13), 0)
+    blurred_image = cv2.GaussianBlur(image, (19, 19), 0)
     new_file_path = os.path.join(new_path, f'blurred_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, blurred_image)
 
     # increase the contrast of the image by scaling pixel values by a factor of 1.5
-    contrast_image = cv2.convertScaleAbs(blurred_image, alpha=1.5, beta=0)
+    contrast_image = cv2.convertScaleAbs(image, alpha=2, beta=0)
     new_file_path = os.path.join(new_path, f'contrast_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, contrast_image)
 
-    # increase the brightness of the image by adding 50 to pixel values
-    bright_image = cv2.convertScaleAbs(contrast_image, alpha=1, beta=50)
+    # increase the brightness of the image by adding 80 to pixel values
+    bright_image = cv2.convertScaleAbs(image, alpha=1, beta=80)
     new_file_path = os.path.join(new_path, f'bright_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, bright_image)
 
     # rotate the image by a small angle
-    rotated_image = rotate_image(bright_image, 5)  # 5 degrees, for example
+    rotated_image = rotate_image(image, 8)  # 6 degrees, for example
     new_file_path = os.path.join(new_path, f'rotated_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, rotated_image)
 
-    # add salt and pepper noise with a probability of 0.01 for both
-    salt_pepper_image = add_salt_pepper_noise(rotated_image, 0.05, 0.05)
+    # add salt and pepper noise with a probability of 0.08 for both
+    salt_pepper_image = add_salt_pepper_noise(image, 0.08, 0.08)
     new_file_path = os.path.join(new_path, f'salt_pepper_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, salt_pepper_image)
 
-    # add Gaussian noise with a mean of 0 and a standard deviation of 0.1
-    gaussian_image = add_gaussian_noise(salt_pepper_image, 0, 0.1)
+    # add Gaussian noise with a mean of 0 and a standard deviation of
+    gaussian_image = add_gaussian_noise(image, 0, 75)
     new_file_path = os.path.join(new_path, f'gaussian_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, gaussian_image)
 
     # apply pixel value adjustment
-    adjusted_image = adjust_pixel_values(image, 50)  # increase pixel values by 50
+    adjusted_image = adjust_pixel_values(image, 70)  # increase pixel values by 50
     new_file_path = os.path.join(new_path, f'adjusted_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, adjusted_image)
 
     # apply cutout
-    cutout_image = apply_cutout(adjusted_image, 0.2)  # apply cutout with size 20% of the original image size
+    cutout_image = apply_cutout(image, 0.08)  # apply cutout with size 8% of the original image size
     new_file_path = os.path.join(new_path, f'cutout_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, cutout_image)
 
     # apply elastic transformation
-    transformed_image = apply_elastic_transform(cutout_image, 50, 3)  # apply elastic transformation with alpha=50 and sigma=3
+    transformed_image = apply_elastic_transform(image, 70, 6)  # apply elastic transformation with alpha=50 and sigma=3
     new_file_path = os.path.join(new_path, f'transformed_image_{image_file}.jpg')
     cv2.imwrite(new_file_path, transformed_image)
 
