@@ -140,14 +140,14 @@ def main():
     im_list = glob('./test_data/test_portrait_images/your_portrait_im/*')
     print("Number of images: ",len(im_list))
     # indicate the output directory
-    out_dir = './test_data/test_portrait_images/your_portrait_results'
+    out_dir = 'test_data/test_portrait_images/your_portrait_results'
     if(not os.path.exists(out_dir)):
         os.mkdir(out_dir)
 
     # Load the cascade face detection model
     face_cascade = cv2.CascadeClassifier('./saved_models/face_detection_cv2/haarcascade_frontalface_default.xml')
     # u2net_portrait path
-    model_dir = './saved_models/u2net_portrait/u2net_portrait.pth'
+    model_dir = 'saved_models/u2net_portrait/u2net_portrait.pth'
 
     # load u2net_portrait model
     net = U2NET(3,1)

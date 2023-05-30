@@ -7,12 +7,12 @@ import torch
 from u2net import U2NETP
 
 # add the U-2-Net directory to the Python path
-sys.path.append('/home/netanel/private/Final_Project_Image_Ragistration/U-2-Net/')
+sys.path.append('/data_manipulation/U-2-Net/')
 
 
 def remove_background(img):
     # load the U-2-Net model
-    model_dir = '/home/netanel/private/Final_Project_Image_Ragistration/U-2-Net/saved_models/u2netp/U2NETP.pth'
+    model_dir = '/data_manipulation/U-2-Net/saved_models/u2netp/U2NETP.pth'
     net = U2NETP(3, 1)
     net.load_state_dict(torch.load(model_dir))
     net.eval()
@@ -35,7 +35,7 @@ def remove_background(img):
 
 
 # directory containing your images
-image_dir = '/home/netanel/private/Final_Project_Image_Ragistration/data_before'
+image_dir = '/data_manipulation/data_before'
 
 # loop over all images in the directory
 for filename in os.listdir(image_dir):

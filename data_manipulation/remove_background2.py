@@ -8,13 +8,13 @@ from PIL import Image
 from torchvision import transforms
 
 # add the U-2-Net directory to the Python path
-sys.path.append('/home/netanel/private/Final_Project_Image_Ragistration/U-2-Net/')
+sys.path.append('/data_manipulation/U-2-Net/')
 
 # import the U-2-Net model
 from model import U2NETP
 
 # load the U-2-Net model
-model_dir = '/home/netanel/private/Final_Project_Image_Ragistration/U-2-Net/saved_models/u2netp/u2netp.pth'
+model_dir = '/data_manipulation/U-2-Net/saved_models/u2netp/u2netp.pth'
 net = U2NETP(3, 1)
 if torch.cuda.is_available():
     net.load_state_dict(torch.load(model_dir))
@@ -27,9 +27,9 @@ if torch.cuda.is_available():
 net.eval()
 
 # directory containing your images
-image_dir = '/home/netanel/private/Final_Project_Image_Ragistration/data_before'
+image_dir = '/data_manipulation/data_before'
 
-after_image_dir = '/home/netanel/private/Final_Project_Image_Ragistration/data_after'
+after_image_dir = '/data_manipulation/data_after'
 
 # loop over all images in the directory
 for filename in os.listdir(image_dir):
