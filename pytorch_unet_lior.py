@@ -22,6 +22,13 @@ class ImageRegistrationNet(nn.Module):
         # Final convolutional layer
         self.final_conv = nn.Conv2d(64, 3, kernel_size=1)     # Final convolutional layer
 
+    def initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
+                nn.init.kaiming_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+
     def contracting_block(self, in_channels, out_channels):
         """
         Contracting block consists of two convolutional layers with ReLU activation and max pooling.
@@ -50,10 +57,15 @@ class ImageRegistrationNet(nn.Module):
 
     def forward(self, x):
         # Contracting path
+        print(x.shape)
         x1 = self.contracting1(x)                             # Apply contracting block 1
+        print(x1.shape)
         x2 = self.contracting2(x1)                            # Apply contracting block 2
+        print(x2.shape)
         x3 = self.contracting3(x2)                            # Apply contracting block 3
+        print(x3.shape)
         x4 = self.contracting4(x3)                            # Apply contracting block 4
+        print(x4.shape)
 
         # Expanding path
         x = self.expanding1(x4)                               # Apply expanding block 1
@@ -66,9 +78,8 @@ class ImageRegistrationNet(nn.Module):
         return x
 
 
-def train(model, train_loader, num_epochs, learning_rate):
-    criterion = nn.MSELoss()                             # Mean Squared Error loss
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)    # Adam optimizer
+def train(model, train_loader, optimizer,num_epochs):
+    criterion = nn.MSELoss()  # Example loss function, you can replace it with your own
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -76,27 +87,30 @@ def train(model, train_loader, num_epochs, learning_rate):
     for epoch in range(num_epochs):
         running_loss = 0.0
 
-        for images, targets in train_loader: #load image
-            images = images.to(device)
+        for inputs, targets in train_loader:
+            inputs = inputs.to(device)
             targets = targets.to(device)
 
-            optimizer.zero_grad()# zero the gradient for step
+            optimizer.zero_grad()
 
             # Forward pass
-            outputs = model(images)
+            outputs = model(inputs)
 
-            # Compute loss
+            # Compute the loss
             loss = criterion(outputs, targets)
 
             # Backward pass and optimization
             loss.backward()
             optimizer.step()
 
-            running_loss += loss.item()#add loss
+            running_loss += loss.item()
 
-        print(f"Epoch {epoch+1}/{num_epochs}, Loss: {running_loss / len(train_loader)}")
+        # Compute the average loss for the epoch
+        epoch_loss = running_loss / len(train_loader)
 
-    print("Training finished!")
+        # Print the loss for every epoch
+        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss}")
+
 
 # Usage example:
 # train(model, train_loader, num_epochs=10, learning_rate=0.001)
