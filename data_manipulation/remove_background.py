@@ -35,7 +35,7 @@ def remove_background(img):
 
 
 # directory containing your images
-image_dir = '/data_manipulation/data_before'
+image_dir = '/data_manipulation/data_before_back'
 
 # loop over all images in the directory
 for filename in os.listdir(image_dir):

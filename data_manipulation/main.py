@@ -2,8 +2,14 @@ import os
 import cv2
 from PIL import ImageEnhance, Image
 import numpy as np
+import sys
 
-PATH = 'C:\\Users\\netan\\PycharmProjects\\dataManipulation\\data_before'
+net_PATH = 'C:\\Users\\netan\\PycharmProjects\\dataManipulation\\data_before'
+Lior_Path = "/home/bravo8234/Desktop/study/final_project/git/Final_Project_Image_Ragistration/data_manipulation/data_before_back"
+if sys.platform.startswith('linux'):
+    PATH = Lior_Path
+else:
+    PATH = net_PATH
 
 image_files = os.listdir(PATH)
 
