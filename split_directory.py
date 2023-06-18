@@ -25,8 +25,8 @@ def split_images(input_dir, output_dir, size):
 
 if __name__ == "__main__":
   # Get the input and output directories from the user.
-  input_dir = "/home/bravo8234/Desktop/study/final_project/git/Final_Project_Image_Ragistration/data_manipulation/data_after_back/"
-  output_dir = "/home/bravo8234/Desktop/study/final_project/git/Final_Project_Image_Ragistration/split_back/"
+  input_dir = "/home/bravo8234/Desktop/study/final_project/git/Final_Project_Image_Ragistration/data_manipulation/data_after_left_no_bg/"
+  output_dir = "/home/bravo8234/Desktop/study/final_project/git/Final_Project_Image_Ragistration/split_left/"
 
   # Get the desired size of the subdirectories from the user.
   size = int(input("Enter the size of the subdirectories: "))

@@ -22,7 +22,7 @@ def add_salt_pepper_noise(image, salt_prob, pepper_prob):
     # Add salt noise
     num_salt = np.ceil(salt_prob * total_pixels).astype(int)
     salt_coords = [np.random.randint(0, i, int(num_salt)) for i in image.shape]
-    noisy_image[salt_coords[0], salt_coords[1], salt_coords[2]] = 1
+    noisy_image[salt_coords[0], salt_coords[1], salt_coords[2]] = 255
 
     # Add pepper noise
     num_pepper = np.ceil(pepper_prob * total_pixels).astype(int)
@@ -124,9 +124,9 @@ def apply_elastic_transform(image, alpha, sigma):
 
 
 # specify your path
-path = 'Data_before_left/'
+path = 'data_before_left_no_bg/'
 
-new_path = 'data_after_left/'
+new_path = 'data_after_left_no_bg/'
 
 # get a list of all the image file names in the directory
 image_files = os.listdir(path)
@@ -185,6 +185,7 @@ for image_file in image_files:
             new_file_path = os.path.join(new_path, f'salt_pepper_image_{prob_a}_{prob_b}_{image_file}.jpg')
             cv2.imwrite(new_file_path, salt_pepper_image)
             per_image_counter +=1
+            break
 
     # add Gaussian noise with a mean of 0 and a standard deviation of
     stds = [25,50,75,100]
@@ -203,7 +204,7 @@ for image_file in image_files:
     cut = [0.03,0.05,0.07]
     for size in cut:
         cutout_image = apply_cutout(image, size)  # apply cutout with size 8% of the original image size
-        new_file_path = os.path.join(new_path, f'cutout_image_{cut}_{image_file}.jpg')
+        new_file_path = os.path.join(new_path, f'cutout_image_{size}_{image_file}.jpg')
         cv2.imwrite(new_file_path, cutout_image)
         per_image_counter +=1
 
