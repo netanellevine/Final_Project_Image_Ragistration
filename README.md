@@ -1,6 +1,6 @@
 # Registration of Medical Images for Breast Cancer: MRI and Mammography
 
-![}(https://user-images.githubusercontent.com/74298433/261010061-21222920-1d20-4dcc-a3cc-998d3bc3a8e2.png)
+![](https://user-images.githubusercontent.com/74298433/261010061-21222920-1d20-4dcc-a3cc-998d3bc3a8e2.png)
 ## Goal
 Current breast cancer surgeries are often performed "blindly", which can result in the removal of excessive healthy breast tissue or missing the tumor margins. Our project addresses this challenge by providing surgeons with more precise parameters related to the tumor's geometry.
 
